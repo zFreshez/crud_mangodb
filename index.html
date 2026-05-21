@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CRUD LocalStorage</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; background-color: #f4f4f9; }
+        .box { background: white; padding: 30px; border-radius: 8px; max-width: 300px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        input { width: 93%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        a { color: #007bff; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="E-mail" required>
+            <input type="password" id="senha" placeholder="Senha" required>
+            <button type="submit">Entrar</button>
+        </form>
+        <p>Não tem conta? <a href="registrar.html">Criar conta</a></p>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+
+            // Busca os usuários salvos no navegador (Simulando o MongoDB)
+            const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+            
+            // Tratamento e verificação dos dados
+            const usuarioValido = usuarios.find(u => u.email === email && u.senha === senha);
+
+            if (usuarioValido) {
+                // Salva o estado da sessão no navegador
+                localStorage.setItem('usuarioLogado', usuarioValido.nome);
+                window.location.href = 'dashboard.html';
+            } else {
+                alert('E-mail ou senha incorretos! Tente novamente.');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; background-color: #f4f4f9; }
+        .box { background: white; padding: 30px; border-radius: 8px; max-width: 300px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        input { width: 93%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        button { width: 100%; padding: 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #218838; }
+        a { color: #007bff; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h2>Criar Conta</h2>
+        <form id="registrarForm">
+            <input type="text" id="nome" placeholder="Nome Completo" required>
+            <input type="email" id="email" placeholder="E-mail" required>
+            <input type="password" id="senha" placeholder="Senha" required>
+            <button type="submit">Salvar e Entrar</button>
+        </form>
+        <p><a href="index.html">Voltar para o Login</a></p>
+    </div>
+
+    <script>
+        document.getElementById('registrarForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+
+            const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+
+            // Tratamento de dados: impede e-mails duplicados
+            if (usuarios.some(u => u.email === email)) {
+                alert('Este e-mail já está cadastrado no sistema!');
+                return;
+            }
+
+            // Salva o novo usuário na lista simulada do LocalStorage
+            usuarios.push({ nome, email, senha });
+            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+            // Loga automaticamente o usuário que acabou de se cadastrar
+            localStorage.setItem('usuarioLogado', nome);
+
+            alert('Conta criada com sucesso! Entrando no painel...');
+            window.location.href = 'dashboard.html';
+        });
+    </script>
+</body>
+</html>

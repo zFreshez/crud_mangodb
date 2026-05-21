@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Controle - CRUD</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f4f9; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #007bff; color: white; }
+        input { padding: 6px; border: 1px solid #ccc; border-radius: 4px; width: 80%; }
+        button { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; }
+        .btn-update { background-color: #ffc107; color: black; }
+        .btn-delete { background-color: #dc3545; color: white; }
+        .btn-logout { background-color: #6c757d; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; float: right; }
+    </style>
+</head>
+<body>
+
+    <h2>Olá, <span id="nomeUsuario"></span>! <a href="#" id="btnSair" class="btn-logout">Sair</a></h2>
+    <h3>Usuários Cadastrados (Gerenciamento CRUD)</h3>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaCorpo"></tbody>
+    </table>
+
+    <script>
+        // Tratamento de segurança: se tentar entrar direto sem login, barra o acesso
+        const logado = localStorage.getItem('usuarioLogado');
+        if (!logado) {
+            window.location.href = 'index.html';
+        }
+        document.getElementById('nomeUsuario').textContent = logado;
+
+        // READ: Função para renderizar/listar os dados na tabela
+        function carregarTabela() {
+            const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+            const tbody = document.getElementById('tabelaCorpo');
+            tbody.innerHTML = '';
+
+            usuarios.forEach((user, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" id="nome-${index}" value="${user.nome}"></td>
+                    <td><input type="email" id="email-${index}" value="${user.email}"></td>
+                    <td>
+                        <button class="btn-update" onclick="atualizarUsuario(${index})">Atualizar</button>
+                        <button class="btn-delete" onclick="excluirUsuario(${index})">Excluir</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // UPDATE: Função para editar os dados salvos
+        window.atualizarUsuario = function(index) {
+            const usuarios = JSON.parse(localStorage.getItem('usuarios'));
+            const novoNome = document.getElementById(`nome-${index}`).value;
+            const novoEmail = document.getElementById(`email-${index}`).value;
+
+            if (!novoNome || !novoEmail) {
+                alert('Os campos não podem ficar vazios!');
+                return;
+            }
+
+            usuarios[index].nome = novoNome;
+            usuarios[index].email = novoEmail;
+            
+            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+            alert('Dados atualizados com sucesso!');
+            carregarTabela();
+        };
+
+        // DELETE: Função para excluir um registro do banco simulado
+        window.excluirUsuario = function(index) {
+            if (confirm('Tem certeza que deseja excluir este usuário?')) {
+                const usuarios = JSON.parse(localStorage.getItem('usuarios'));
+                usuarios.splice(index, 1); 
+                
+                localStorage.setItem('usuarios', JSON.stringify(usuarios));
+                alert('Usuário removido!');
+                carregarTabela();
+            }
+        };
+
+        // LOGOUT: Finaliza a sessão simulada
+        document.getElementById('btnSair').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('usuarioLogado');
+            window.location.href = 'index.html';
+        });
+
+        // Carrega os dados na tela assim que abre a página
+        carregarTabela();
+    </script>
+</body>
+</html>
